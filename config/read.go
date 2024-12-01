@@ -1,26 +1,22 @@
+// config/read.go
 package config
 
 import (
 	"encoding/json"
-	"os"
+	"io/ioutil"
 )
 
-func ReadConfig(path string) (Config, error) {
-	var config Config
-
-	all, err := os.ReadFile(path)
-
+func ReadConfig(filePath string) (Config, error) {
+	var cfg Config
+	data, err := ioutil.ReadFile(filePath)
 	if err != nil {
-		return config, err
+		return cfg, err
 	}
 
-	return config, json.Unmarshal(all, &config)
-}
-
-func MustReadConfig(path string) Config {
-	config, err := ReadConfig(path)
+	err = json.Unmarshal(data, &cfg)
 	if err != nil {
-		panic(err)
+		return cfg, err
 	}
-	return config
+
+	return cfg, nil
 }
