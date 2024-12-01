@@ -1,7 +1,7 @@
 package domain
 
 import (
-	chatRoomDomain "golipors/internal/chatRoom/domain"
+	chatRoomDomain "golipors/internal/chatroom/domain"
 	userDomain "golipors/internal/user/domain"
 	"time"
 )

@@ -1,10 +1,10 @@
 package domain
 
 import (
-	chatRoomDomain "golipors/internal/chatRoom/domain"
+	chatRoomDomain "golipors/internal/chatroom/domain"
 	questionDomain "golipors/internal/question/domain"
 	responseRoomDomain "golipors/internal/response/domain"
-	surveyRoleDomain "golipors/internal/surveyRole/domain"
+	surveyRoleDomain "golipors/internal/survey_role/domain"
 	userDomain "golipors/internal/user/domain"
 	"time"
 )

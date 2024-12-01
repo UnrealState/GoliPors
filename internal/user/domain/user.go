@@ -5,8 +5,8 @@ import (
 	notificationDomain "golipors/internal/notification/domain"
 	responseDomain "golipors/internal/response/domain"
 	surveyDomain "golipors/internal/survey/domain"
-	surveyRoleDomain "golipors/internal/surveyRole/domain"
-	systemRoleDomain "golipors/internal/systemRole/domain"
+	surveyRoleDomain "golipors/internal/survey_role/domain"
+	systemRoleDomain "golipors/internal/system_role/domain"
 	transactionDomain "golipors/internal/transaction/domain"
 	"time"
 )
