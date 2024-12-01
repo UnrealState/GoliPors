@@ -1,16 +1,20 @@
 {
-  "db" : {
+  "db": {
     "host": "127.0.0.1",
     "port": 5432,
-    "user": "",
-    "pass": "",
-    "name": "",
+    "user": "your_db_user",
+    "pass": "your_db_password",
+    "name": "your_db_name",
     "schema": "public"
   },
-  "server" : {
-    "port": 0,
-    "secret": "",
-    "auth_expiration_minutes": 0,
-    "auth_refresh_minutes": 0
+  "server": {
+    "port": 8080,
+    "secret": "your_jwt_secret_key",
+    "auth_expiration_minutes": 60,
+    "auth_refresh_minutes": 1440
+  },
+  "redis": {
+    "host": "127.0.0.1",
+    "port": 6379
   }
 }
