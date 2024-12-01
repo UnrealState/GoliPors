@@ -1,3 +1,16 @@
 {
-
+  "db" : {
+    "host": "127.0.0.1",
+    "port": 5432,
+    "user": "",
+    "pass": "",
+    "name": "",
+    "schema": "public"
+  },
+  "server" : {
+    "port": 0,
+    "secret": "",
+    "auth_expiration_minutes": 0,
+    "auth_refresh_minutes": 0
+  }
 }
