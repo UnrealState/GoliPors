@@ -10,24 +10,24 @@ import (
 )
 
 type Survey struct {
-	ID                       uint      `gorm:"primaryKey"`
-	Title                    string    `gorm:"not null"`
-	CreationTime             time.Time `gorm:"not null"`
+	ID                       uint
+	Title                    string
+	CreationTime             time.Time
 	StartTime                *time.Time
 	EndTime                  *time.Time
-	RandomOrder              bool `gorm:"default:false"`
-	AllowReturn              bool `gorm:"default:false"`
-	NumParticipationAttempts int  `gorm:"default:1"`
+	RandomOrder              bool
+	AllowReturn              bool
+	NumParticipationAttempts int
 	ResponseTime             time.Duration
-	AnonymityLevel           string `gorm:"not null"`
+	AnonymityLevel           string
 	OwnerID                  uint
-	Owner                    *userDomain.User               `gorm:"foreignKey:OwnerID"`
-	DemographicRestrictions  string                         `gorm:"type:text"`
-	ResponseModification     bool                           `gorm:"default:false"`
-	Questions                []*questionDomain.Question     `gorm:"foreignKey:SurveyID"`
-	Chatroom                 *chatRoomDomain.Chatroom       `gorm:"foreignKey:SurveyID"`
-	SurveyRoles              []*surveyRoleDomain.Role       `gorm:"foreignKey:SurveyID"`
-	Responses                []*responseRoomDomain.Response `gorm:"foreignKey:SurveyID"`
+	Owner                    *userDomain.User
+	DemographicRestrictions  string
+	ResponseModification     bool
+	Questions                []*questionDomain.Question
+	Chatroom                 *chatRoomDomain.Chatroom
+	SurveyRoles              []*surveyRoleDomain.Role
+	Responses                []*responseRoomDomain.Response
 	CreatedAt                time.Time
 	UpdatedAt                time.Time
 }

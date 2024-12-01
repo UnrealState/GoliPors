@@ -6,9 +6,9 @@ import (
 )
 
 type Notification struct {
-	ID        uint `gorm:"primaryKey"`
+	ID        uint
 	UserID    uint
-	User      *userDomain.User `gorm:"foreignKey:UserID"`
-	Message   string           `gorm:"type:text;not null"`
-	CreatedAt time.Time        `gorm:"not null"`
+	User      *userDomain.User
+	Message   string
+	CreatedAt time.Time
 }

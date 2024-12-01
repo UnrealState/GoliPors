@@ -7,21 +7,21 @@ import (
 )
 
 type Role struct {
-	ID             uint `gorm:"primaryKey"`
+	ID             uint
 	SurveyID       uint
-	Survey         *surveyDomain.Survey `gorm:"foreignKey:SurveyID"`
+	Survey         *surveyDomain.Survey
 	UserID         uint
-	User           *userDomain.User `gorm:"foreignKey:UserID"`
-	RoleName       string           `gorm:"not null"`
-	IsTemporary    bool             `gorm:"default:false"`
+	User           *userDomain.User
+	RoleName       string
+	IsTemporary    bool
 	ExpiryTime     *time.Time
-	CanViewSurvey  bool `gorm:"default:false"`
-	CanAssignVotes bool `gorm:"default:false"`
-	CanCastVotes   bool `gorm:"default:false"`
-	CanEditSurvey  bool `gorm:"default:false"`
-	CanAddVotes    bool `gorm:"default:false"`
-	CanAssignRoles bool `gorm:"default:false"`
-	CanViewReports bool `gorm:"default:false"`
+	CanViewSurvey  bool
+	CanAssignVotes bool
+	CanCastVotes   bool
+	CanEditSurvey  bool
+	CanAddVotes    bool
+	CanAssignRoles bool
+	CanViewReports bool
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 }

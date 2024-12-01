@@ -7,10 +7,10 @@ import (
 )
 
 type Chatroom struct {
-	ID        uint `gorm:"primaryKey"`
+	ID        uint
 	SurveyID  uint
-	Survey    *surveyDomain.Survey     `gorm:"foreignKey:SurveyID"`
-	Messages  []*messageDomain.Message `gorm:"foreignKey:ChatroomID"`
+	Survey    *surveyDomain.Survey
+	Messages  []*messageDomain.Message
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

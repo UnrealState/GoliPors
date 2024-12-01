@@ -8,17 +8,17 @@ import (
 )
 
 type Transaction struct {
-	ID         uint `gorm:"primaryKey"`
+	ID         uint
 	UserID     uint
-	User       *userDomain.User `gorm:"foreignKey:UserID"`
-	Amount     float64          `gorm:"not null"`
-	VoteCount  int              `gorm:"default:0"`
-	Type       string           `gorm:"not null"`
+	User       *userDomain.User
+	Amount     float64
+	VoteCount  int
+	Type       string
 	SurveyID   *uint
 	Survey     *surveyDomain.Survey `gorm:"foreignKey:SurveyID"`
 	ResponseID *uint
-	Response   *responseDomain.Response `gorm:"foreignKey:ResponseID"`
-	Timestamp  time.Time                `gorm:"not null"`
+	Response   *responseDomain.Response
+	Timestamp  time.Time
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }

@@ -8,18 +8,18 @@ import (
 )
 
 type Response struct {
-	ID                uint `gorm:"primaryKey"`
+	ID                uint
 	UserID            uint
-	User              *userDomain.User `gorm:"foreignKey:UserID"`
+	User              *userDomain.User
 	SurveyID          uint
-	Survey            *surveyDomain.Survey `gorm:"foreignKey:SurveyID"`
+	Survey            *surveyDomain.Survey
 	QuestionID        uint
-	Question          *questionDomain.Question `gorm:"foreignKey:QuestionID"`
-	ResponseText      string                   `gorm:"type:text"`
-	SelectedOptionIDs string                   `gorm:"type:text"`
-	EncryptedData     []byte                   `gorm:"type:bytea"`
-	Secret            string                   `gorm:"not null"`
-	ResponseTime      time.Time                `gorm:"not null"`
+	Question          *questionDomain.Question
+	ResponseText      string
+	SelectedOptionIDs string
+	EncryptedData     []byte
+	Secret            string
+	ResponseTime      time.Time
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
 }

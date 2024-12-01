@@ -7,11 +7,11 @@ import (
 )
 
 type Message struct {
-	ID         uint `gorm:"primaryKey"`
+	ID         uint
 	ChatroomID uint
-	Chatroom   *chatRoomDomain.Chatroom `gorm:"foreignKey:ChatroomID"`
+	Chatroom   *chatRoomDomain.Chatroom
 	UserID     uint
-	User       *userDomain.User `gorm:"foreignKey:UserID"`
-	Content    string           `gorm:"type:text;not null"`
-	CreatedAt  time.Time        `gorm:"not null"`
+	User       *userDomain.User
+	Content    string
+	CreatedAt  time.Time
 }

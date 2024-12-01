@@ -6,10 +6,10 @@ import (
 )
 
 type Option struct {
-	ID         uint `gorm:"primaryKey"`
+	ID         uint
 	QuestionID uint
-	Question   *questionDomain.Question `gorm:"foreignKey:QuestionID"`
-	Text       string                   `gorm:"not null"`
+	Question   *questionDomain.Question
+	Text       string
 	IsCorrect  bool
 	CreatedAt  time.Time
 	UpdatedAt  time.Time

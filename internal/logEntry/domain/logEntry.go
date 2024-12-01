@@ -6,13 +6,13 @@ import (
 )
 
 type LogEntry struct {
-	ID        uint      `gorm:"primaryKey"`
-	Timestamp time.Time `gorm:"not null"`
-	Level     string    `gorm:"not null"`
+	ID        uint
+	Timestamp time.Time
+	Level     string
 	Service   string
 	Endpoint  string
 	UserID    *uint
-	User      *userDomain.User `gorm:"foreignKey:UserID"`
-	Message   string           `gorm:"type:text;not null"`
-	Context   string           `gorm:"type:text"`
+	User      *userDomain.User
+	Message   string
+	Context   string
 }

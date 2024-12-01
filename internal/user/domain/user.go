@@ -12,24 +12,24 @@ import (
 )
 
 type User struct {
-	ID               uint      `gorm:"primaryKey"`
-	NationalID       string    `gorm:"size:10;not null;unique"`
-	Email            string    `gorm:"not null;unique"`
-	Password         string    `gorm:"not null"` // Hashed password
-	FirstName        string    `gorm:"not null"`
-	LastName         string    `gorm:"not null"`
-	DateOfBirth      time.Time `gorm:"not null"`
-	RegistrationDate time.Time `gorm:"not null"`
+	ID               uint
+	NationalID       string
+	Email            string
+	Password         string // Hashed password
+	FirstName        string
+	LastName         string
+	DateOfBirth      time.Time
+	RegistrationDate time.Time
 	City             string
-	WalletBalance    float64 `gorm:"default:0"`
-	VoteBalance      int     `gorm:"default:0"`
+	WalletBalance    float64
+	VoteBalance      int
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
-	SystemRoles      []*systemRoleDomain.Role           `gorm:"many2many:user_system_roles;"`
-	SurveyRoles      []*surveyRoleDomain.Role           `gorm:"foreignKey:UserID"`
-	Surveys          []*surveyDomain.Survey             `gorm:"foreignKey:OwnerID"`
-	Notifications    []*notificationDomain.Notification `gorm:"foreignKey:UserID"`
-	Messages         []*messageDomain.Message           `gorm:"foreignKey:UserID"`
-	Responses        []*responseDomain.Response         `gorm:"foreignKey:UserID"`
-	Transactions     []*transactionDomain.Transaction   `gorm:"foreignKey:UserID"`
+	SystemRoles      []*systemRoleDomain.Role
+	SurveyRoles      []*surveyRoleDomain.Role
+	Surveys          []*surveyDomain.Survey
+	Notifications    []*notificationDomain.Notification
+	Messages         []*messageDomain.Message
+	Responses        []*responseDomain.Response
+	Transactions     []*transactionDomain.Transaction
 }

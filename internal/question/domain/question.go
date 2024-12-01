@@ -7,17 +7,17 @@ import (
 )
 
 type Question struct {
-	ID               uint `gorm:"primaryKey"`
+	ID               uint
 	SurveyID         uint
-	Survey           *surveyDomain.Survey `gorm:"foreignKey:SurveyID"`
-	Text             string               `gorm:"not null"`
-	Type             string               `gorm:"not null"`
+	Survey           *surveyDomain.Survey
+	Text             string
+	Type             string
 	Order            int
 	AttachmentURL    string
-	CorrectOptionIDs string `gorm:"type:text"`
+	CorrectOptionIDs string
 	IsConditional    bool
-	Condition        string                 `gorm:"type:text"`
-	Options          []*optionDomain.Option `gorm:"foreignKey:QuestionID"`
+	Condition        string
+	Options          []*optionDomain.Option
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 }
