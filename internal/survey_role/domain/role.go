@@ -6,11 +6,13 @@ import (
 	"time"
 )
 
+type RoleID uint
+
 type Role struct {
-	ID             uint
-	SurveyID       uint
+	ID             RoleID
+	SurveyID       surveyDomain.SurveyID
 	Survey         *surveyDomain.Survey
-	UserID         uint
+	UserID         userDomain.UserID
 	User           *userDomain.User
 	RoleName       string
 	IsTemporary    bool

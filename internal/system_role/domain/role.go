@@ -4,8 +4,10 @@ import (
 	userDomain "golipors/internal/user/domain"
 )
 
+type RoleID uint
+
 type Role struct {
-	ID    uint
+	ID    RoleID
 	Name  string
 	Users []*userDomain.User
 }

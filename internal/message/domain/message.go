@@ -6,11 +6,13 @@ import (
 	"time"
 )
 
+type MessageID uint
+
 type Message struct {
-	ID         uint
-	ChatroomID uint
+	ID         MessageID
+	ChatroomID chatRoomDomain.ChatroomID
 	Chatroom   *chatRoomDomain.Chatroom
-	UserID     uint
+	UserID     userDomain.UserID
 	User       *userDomain.User
 	Content    string
 	CreatedAt  time.Time
