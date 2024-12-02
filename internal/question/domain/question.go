@@ -6,9 +6,11 @@ import (
 	"time"
 )
 
+type QuestionID uint
+
 type Question struct {
-	ID               uint
-	SurveyID         uint
+	ID               QuestionID
+	SurveyID         surveyDomain.SurveyID
 	Survey           *surveyDomain.Survey
 	Text             string
 	Type             string

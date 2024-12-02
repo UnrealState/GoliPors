@@ -7,16 +7,18 @@ import (
 	"time"
 )
 
+type TransactionID uint
+
 type Transaction struct {
-	ID         uint
-	UserID     uint
+	ID         TransactionID
+	UserID     userDomain.UserID
 	User       *userDomain.User
 	Amount     float64
 	VoteCount  int
 	Type       string
-	SurveyID   *uint
-	Survey     *surveyDomain.Survey `gorm:"foreignKey:SurveyID"`
-	ResponseID *uint
+	SurveyID   *surveyDomain.SurveyID
+	Survey     *surveyDomain.Survey
+	ResponseID *responseDomain.ResponseID
 	Response   *responseDomain.Response
 	Timestamp  time.Time
 	CreatedAt  time.Time

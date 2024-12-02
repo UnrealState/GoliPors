@@ -11,8 +11,10 @@ import (
 	"time"
 )
 
+type UserID uint
+
 type User struct {
-	ID               uint
+	ID               UserID
 	NationalID       string
 	Email            string
 	Password         string // Hashed password

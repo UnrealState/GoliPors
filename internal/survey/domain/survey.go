@@ -9,8 +9,10 @@ import (
 	"time"
 )
 
+type SurveyID uint
+
 type Survey struct {
-	ID                       uint
+	ID                       SurveyID
 	Title                    string
 	CreationTime             time.Time
 	StartTime                *time.Time
@@ -20,7 +22,7 @@ type Survey struct {
 	NumParticipationAttempts int
 	ResponseTime             time.Duration
 	AnonymityLevel           string
-	OwnerID                  uint
+	OwnerID                  userDomain.UserID
 	Owner                    *userDomain.User
 	DemographicRestrictions  string
 	ResponseModification     bool

@@ -6,9 +6,11 @@ import (
 	"time"
 )
 
+type ChatroomID uint
+
 type Chatroom struct {
-	ID        uint
-	SurveyID  uint
+	ID        ChatroomID
+	SurveyID  surveyDomain.SurveyID
 	Survey    *surveyDomain.Survey
 	Messages  []*messageDomain.Message
 	CreatedAt time.Time

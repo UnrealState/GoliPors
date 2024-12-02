@@ -5,13 +5,15 @@ import (
 	"time"
 )
 
+type LogEntryID uint
+
 type LogEntry struct {
-	ID        uint
+	ID        LogEntryID
 	Timestamp time.Time
 	Level     string
 	Service   string
 	Endpoint  string
-	UserID    *uint
+	UserID    *userDomain.UserID
 	User      *userDomain.User
 	Message   string
 	Context   string

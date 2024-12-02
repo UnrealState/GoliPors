@@ -7,13 +7,15 @@ import (
 	"time"
 )
 
+type ResponseID uint
+
 type Response struct {
-	ID                uint
-	UserID            uint
+	ID                ResponseID
+	UserID            userDomain.UserID
 	User              *userDomain.User
-	SurveyID          uint
+	SurveyID          surveyDomain.SurveyID
 	Survey            *surveyDomain.Survey
-	QuestionID        uint
+	QuestionID        questionDomain.QuestionID
 	Question          *questionDomain.Question
 	ResponseText      string
 	SelectedOptionIDs string

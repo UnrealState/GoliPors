@@ -5,9 +5,11 @@ import (
 	"time"
 )
 
+type OptionID uint
+
 type Option struct {
-	ID         uint
-	QuestionID uint
+	ID         OptionID
+	QuestionID questionDomain.QuestionID
 	Question   *questionDomain.Question
 	Text       string
 	IsCorrect  bool

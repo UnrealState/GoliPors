@@ -5,9 +5,11 @@ import (
 	"time"
 )
 
+type NotificationID uint
+
 type Notification struct {
-	ID        uint
-	UserID    uint
+	ID        NotificationID
+	UserID    userDomain.UserID
 	User      *userDomain.User
 	Message   string
 	CreatedAt time.Time
