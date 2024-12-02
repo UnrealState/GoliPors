@@ -18,6 +18,7 @@ type DBConfig struct {
 type ServerConfig struct {
 	Port                  uint   `json:"port"`
 	Secret                string `json:"secret"`
+	MaxRequestsPerSecond  uint   `json:"maxRequestsPerSecond"`
 	AuthExpirationMinutes uint   `json:"auth_expiration_minutes"`
 	AuthRefreshMinutes    uint   `json:"auth_refresh_minutes"`
 }
