@@ -2,16 +2,26 @@ package http
 
 import (
 	"fmt"
+	"github.com/gofiber/contrib/swagger"
 	"github.com/gofiber/fiber/v2"
 	middlerwares "golipors/api/http/middlewares"
-	"golipors/app"
+	di "golipors/app"
 	"golipors/config"
 )
 
-func Bootstrap(appContainer app.App, cfg config.ServerConfig) error {
-	router := fiber.New()
+func Bootstrap(appContainer di.App, cfg config.ServerConfig) error {
+	app := fiber.New()
 
-	router.Group("/api/v1", middlerwares.RateLimiter())
+	app.Use(
+		swagger.New(swagger.Config{
+			BasePath: "/",
+			FilePath: "./docs/api/swagger.json",
+			Path:     "swagger",
+		}),
+		middlerwares.RateLimiter(),
+	)
 
-	return router.Listen(fmt.Sprintf(":%d", cfg.Port))
+	app.Group("/api/v1")
+
+	return app.Listen(fmt.Sprintf(":%d", cfg.Port))
 }
