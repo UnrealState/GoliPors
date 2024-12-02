@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"golipors/api/http"
 	"golipors/app"
 	"golipors/config"
 	"os"
@@ -18,12 +19,11 @@ func main() {
 
 	c := config.MustReadConfig(*configPath)
 
-	_ = app.MustNewApp(c)
+	appContainer := app.MustNewApp(c)
 
-	// ToDo Http bootstrap
-	/*err := http.Bootstrap(appContainer, c.Server)
+	err := http.Bootstrap(appContainer, c.Server)
 
 	if err != nil {
 		return
-	}*/
+	}
 }
