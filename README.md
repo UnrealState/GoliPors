@@ -1,5 +1,31 @@
-# GoliPors
+<h1>GoliPors</h1> 
 
+## Menu
+<!-- TOC -->
+  * [Menu](#menu)
+  * [Commands](#commands)
+  * [Project structure](#project-structure)
+<!-- TOC -->
+
+## Commands
+```bash
+# Build & up containers
+make up
+
+# Down containers
+make down
+
+# To build a container. You can pass CONTAINER & FLAGS.
+make build CONTAINER=container_name FLAGS=--no-cache
+
+# Run docker attached logs.
+make logs
+
+# Rebuild all the stack
+make rebuild
+```
+
+## Project structure
 ```bash
 .
 │─── cmd

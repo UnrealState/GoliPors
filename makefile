@@ -27,7 +27,7 @@ go-mod-vendor:
 
 # Default target to bring up services
 up: ensure-network go-mod-vendor
-	docker compose --project-directory $(ROOT_DIR) $(COMPOSE_FILES) up
+	docker compose --project-directory $(ROOT_DIR) $(COMPOSE_FILES) up -d
 
 # Target to bring down services
 down: ensure-network go-mod-vendor
@@ -44,6 +44,6 @@ logs: ensure-network go-mod-vendor
 
 # Target to rebuild and restart services
 rebuild: ensure-network go-mod-vendor
-	docker compose --project-directory $(ROOT_DIR) $(COMPOSE_FILES) up  --build
+	docker compose --project-directory $(ROOT_DIR) $(COMPOSE_FILES) up --build
 
 .PHONY: up down logs rebuild
