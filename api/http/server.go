@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gofiber/contrib/swagger"
 	"github.com/gofiber/fiber/v2"
+	"golipors/api/http/handlers"
 	middlerwares "golipors/api/http/middlewares"
 	di "golipors/app"
 	"golipors/config"
@@ -20,7 +21,9 @@ func Bootstrap(appContainer di.App, cfg config.ServerConfig) error {
 		middlerwares.RateLimiter(),
 	)
 
-	app.Group("/api/v1")
+	api := app.Group("/api/v1")
+
+	handlers.RegisterAccountHandlers(api, appContainer)
 
 	return app.Listen(fmt.Sprintf(":%d", cfg.Port))
 }
