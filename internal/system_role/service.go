@@ -13,14 +13,14 @@ func NewSystemRoleService(repo port.SystemRoleRepository) port.SystemRoleService
 	return &systemRoleService{repo: repo}
 }
 
-func (s *systemRoleService) AddSystemRole(role *domain.Role) error {
+func (s *systemRoleService) AddSystemRole(role *domain.SystemRole) error {
 	return s.repo.CreateSystemRole(role)
 }
 
-func (s *systemRoleService) GetSystemRoleDetails(id uint) (*domain.Role, error) {
+func (s *systemRoleService) GetSystemRoleDetails(id uint) (*domain.SystemRole, error) {
 	return s.repo.GetSystemRoleByID(id)
 }
 
-func (s *systemRoleService) ListAllSystemRoles() ([]*domain.Role, error) {
+func (s *systemRoleService) ListAllSystemRoles() ([]*domain.SystemRole, error) {
 	return s.repo.ListSystemRoles()
 }

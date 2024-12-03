@@ -1,10 +1,10 @@
 {
   "db": {
-    "host": "golipors-db",
+    "host": "127.0.0.1",
     "port": 5432,
-    "user": "porestgres",
-    "pass": "postgres",
-    "name": "postgres",
+    "user": "golipors_user",
+    "pass": "golipors_pass",
+    "name": "golipors_db",
     "schema": "public"
   },
   "server": {
@@ -14,7 +14,7 @@
     "auth_refresh_minutes": 1440
   },
   "redis": {
-    "host": "golipors-redis",
+    "host": "127.0.0.1",
     "port": 6379
   }
 }

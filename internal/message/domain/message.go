@@ -1,19 +1,11 @@
 package domain
 
-import (
-	chatRoomDomain "golipors/internal/chatroom/domain"
-	userDomain "golipors/internal/user/domain"
-	"time"
-)
-
-type MessageID uint
+import "time"
 
 type Message struct {
-	ID         MessageID
-	ChatroomID chatRoomDomain.ChatroomID
-	Chatroom   *chatRoomDomain.Chatroom
-	UserID     userDomain.UserID
-	User       *userDomain.User
-	Content    string
-	CreatedAt  time.Time
+	ID         uint      `gorm:"primaryKey"`
+	ChatroomID uint      `gorm:"not null"`
+	UserID     uint      `gorm:"not null"`
+	Content    string    `gorm:"type:text;not null"`
+	CreatedAt  time.Time `gorm:"not null"`
 }

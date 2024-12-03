@@ -1,25 +1,17 @@
 package domain
 
-import (
-	optionDomain "golipors/internal/option/domain"
-	surveyDomain "golipors/internal/survey/domain"
-	"time"
-)
-
-type QuestionID uint
+import "time"
 
 type Question struct {
-	ID               QuestionID
-	SurveyID         surveyDomain.SurveyID
-	Survey           *surveyDomain.Survey
-	Text             string
-	Type             string
+	ID               uint   `gorm:"primaryKey"`
+	SurveyID         uint   `gorm:"not null"`
+	Text             string `gorm:"not null"`
+	Type             string `gorm:"not null"`
 	Order            int
 	AttachmentURL    string
-	CorrectOptionIDs string
+	CorrectOptionIDs string `gorm:"type:text"`
 	IsConditional    bool
-	Condition        string
-	Options          []*optionDomain.Option
+	Condition        string `gorm:"type:text"`
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 }

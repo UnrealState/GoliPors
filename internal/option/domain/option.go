@@ -1,17 +1,11 @@
 package domain
 
-import (
-	questionDomain "golipors/internal/question/domain"
-	"time"
-)
-
-type OptionID uint
+import "time"
 
 type Option struct {
-	ID         OptionID
-	QuestionID questionDomain.QuestionID
-	Question   *questionDomain.Question
-	Text       string
+	ID         uint   `gorm:"primaryKey"`
+	QuestionID uint   `gorm:"not null"`
+	Text       string `gorm:"not null"`
 	IsCorrect  bool
 	CreatedAt  time.Time
 	UpdatedAt  time.Time

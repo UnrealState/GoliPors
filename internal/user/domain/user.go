@@ -1,37 +1,33 @@
 package domain
 
 import (
-	messageDomain "golipors/internal/message/domain"
-	notificationDomain "golipors/internal/notification/domain"
-	responseDomain "golipors/internal/response/domain"
-	surveyDomain "golipors/internal/survey/domain"
-	surveyRoleDomain "golipors/internal/survey_role/domain"
-	systemRoleDomain "golipors/internal/system_role/domain"
-	transactionDomain "golipors/internal/transaction/domain"
 	"time"
+
+	"golipors/pkg/utils"
+
+	"gorm.io/gorm"
 )
 
-type UserID uint
-
 type User struct {
-	ID               UserID
-	NationalID       string
-	Email            string
-	Password         string // Hashed password
-	FirstName        string
-	LastName         string
-	DateOfBirth      time.Time
-	RegistrationDate time.Time
+	ID               uint      `gorm:"primaryKey"`
+	NationalID       string    `gorm:"size:10;not null;unique"`
+	Email            string    `gorm:"not null;unique"`
+	Password         string    `gorm:"not null"` // Hashed password
+	FirstName        string    `gorm:"not null"`
+	LastName         string    `gorm:"not null"`
+	DateOfBirth      time.Time `gorm:"not null"`
+	RegistrationDate time.Time `gorm:"not null"`
 	City             string
-	WalletBalance    float64
-	VoteBalance      int
+	WalletBalance    float64 `gorm:"default:0"`
+	VoteBalance      int     `gorm:"default:0"`
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
-	SystemRoles      []*systemRoleDomain.Role
-	SurveyRoles      []*surveyRoleDomain.Role
-	Surveys          []*surveyDomain.Survey
-	Notifications    []*notificationDomain.Notification
-	Messages         []*messageDomain.Message
-	Responses        []*responseDomain.Response
-	Transactions     []*transactionDomain.Transaction
+}
+
+func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
+	u.Password, err = utils.HashPassword(u.Password)
+	if err != nil {
+		return err
+	}
+	return nil
 }
