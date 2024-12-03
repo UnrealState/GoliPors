@@ -2,6 +2,7 @@ package app
 
 import (
 	"golipors/config"
+	"golipors/pkg/postgres"
 	"gorm.io/gorm"
 )
 
@@ -16,8 +17,7 @@ func (a *app) Config() config.Config {
 }
 
 func (a *app) setDB() error {
-	// ToDo Initialize db connection
-	/*db, err := postgres.NewPsqlGormConnection(postgres.DBConnOptions{
+	db, err := postgres.NewPsqlGormConnection(postgres.DBConnOptions{
 		Host:   a.cfg.DB.Host,
 		Port:   a.cfg.DB.Port,
 		User:   a.cfg.DB.User,
@@ -30,7 +30,7 @@ func (a *app) setDB() error {
 		return err
 	}
 
-	a.db = db*/
+	a.db = db
 	return nil
 }
 
