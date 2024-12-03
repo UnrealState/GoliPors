@@ -2,24 +2,34 @@ package postgres
 
 import (
 	"fmt"
-	"golipors/config"
 	"golipors/pkg/models"
+	"gorm.io/gorm/logger"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-var DB *gorm.DB
+type DBConnOptions struct {
+	Host   string
+	Port   uint
+	User   string
+	Pass   string
+	Name   string
+	Schema string
+}
 
-func InitDB(cfg config.DBConfig) error {
-	dsn := fmt.Sprintf(
-		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		cfg.Host, cfg.Port, cfg.User, cfg.Pass, cfg.Name,
-	)
+func (o DBConnOptions) PostgresDSN() string {
+	return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s search_path=%s sslmode=disable",
+		o.Host, o.Port, o.User, o.Pass, o.Name, o.Schema)
+}
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+func NewPsqlGormConnection(opt DBConnOptions) (*gorm.DB, error) {
+	db, err := gorm.Open(postgres.Open(opt.PostgresDSN()), &gorm.Config{
+		Logger: logger.Discard,
+	})
+
 	if err != nil {
-		return err
+		return db, err
 	}
 
 	// Migrate the schema
@@ -38,9 +48,8 @@ func InitDB(cfg config.DBConfig) error {
 		&models.LogEntry{},
 	)
 	if err != nil {
-		return err
+		return db, err
 	}
 
-	DB = db
-	return nil
+	return db, nil
 }
