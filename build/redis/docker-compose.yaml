@@ -1,0 +1,21 @@
+services:
+  golipors-redis:
+    image: redis/redis-stack:latest
+    container_name: golipors-redis
+    ports:
+      - "8003:8001"
+    networks:
+      - golipors-network
+    volumes:
+      - golipors-redis-volume:/data
+    depends_on:
+      - golipors-db
+
+volumes:
+  golipors-redis-volume:
+    driver: local
+
+networks:
+  golipors-network:
+    name: golipors-network
+    external: true

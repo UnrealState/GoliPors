@@ -1,2 +1,5 @@
 .idea
 config.json
+vendor
+*.env
+!example.env

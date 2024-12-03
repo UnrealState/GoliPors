@@ -1,0 +1,19 @@
+services:
+  golipors-db:
+    image: postgis/postgis:13-3.4
+    container_name: golipors-db
+    volumes:
+      - golipors-db-volume:/var/lib/postgresql/data
+    networks:
+      - golipors-network
+    env_file: ./postgres/.env
+    restart: always
+
+networks:
+  golipors-network:
+    name: golipors-network
+    external: true
+
+volumes:
+  golipors-db-volume:
+    driver: local

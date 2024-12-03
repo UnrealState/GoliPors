@@ -15,8 +15,8 @@ type redisCacheAdapter struct {
 func NewRedisProvider(redisAddr string) c.Provider {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     redisAddr,
-		Password: "", // no password set
-		DB:       0,  // use default DB
+		Password: "",
+		DB:       0,
 	})
 
 	return &redisCacheAdapter{

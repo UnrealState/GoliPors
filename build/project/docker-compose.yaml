@@ -1,8 +1,20 @@
 services:
   golipors-app:
     container_name: golipors-app
+    networks:
+      - golipors-network
     ports:
       - "8080:8080"
     build:
-      context: ../../
+      context: ../
       dockerfile: build/project/Dockerfile
+    volumes:
+      - "../config.json:/usr/local/bin/config.json"
+    depends_on:
+      - golipors-db
+      - golipors-redis
+
+networks:
+  golipors-network:
+    name: golipors-network
+    external: true
