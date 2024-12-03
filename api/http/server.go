@@ -11,7 +11,6 @@ import (
 
 func Bootstrap(appContainer di.App, cfg config.ServerConfig) error {
 	app := fiber.New()
-
 	app.Use(
 		swagger.New(swagger.Config{
 			BasePath: "/",
