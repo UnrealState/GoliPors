@@ -8,6 +8,7 @@ ROOT_DIR := ./build
 # Compose files relative to the root directory
 COMPOSE_FILES := \
 	-f $(ROOT_DIR)/postgres/docker-compose.yaml \
+	-f $(ROOT_DIR)/redis/docker-compose.yaml \
 	-f $(ROOT_DIR)/project/docker-compose.yaml
 
 NETWORK_NAME=golipors-network
@@ -21,6 +22,7 @@ ensure-network:
 
 go-mod-vendor:
 	@echo "Running 'go mod vendor' to sync dependencies..."
+	@go mod tidy
 	@go mod vendor
 
 # Default target to bring up services

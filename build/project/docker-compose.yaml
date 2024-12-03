@@ -12,6 +12,7 @@ services:
       - "../config.json:/usr/local/bin/config.json"
     depends_on:
       - golipors-db
+      - golipors-redis
 
 networks:
   golipors-network:
