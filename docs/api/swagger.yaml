@@ -4,12 +4,12 @@ info:
   contact:
     email: fiber@swagger.io
     name: API Support
-  description: This is a sample swagger for Fiber
+  description: An online form platform
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: Fiber Example API
+  title: GoliPors Api Doc
   version: "1.0"
 paths: {}
 swagger: "2.0"

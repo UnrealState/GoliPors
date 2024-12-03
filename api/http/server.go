@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gofiber/contrib/swagger"
 	"github.com/gofiber/fiber/v2"
+	"golipors/api/http/handlers"
 	middlerwares "golipors/api/http/middlewares"
 	di "golipors/app"
 	"golipors/config"
@@ -11,7 +12,6 @@ import (
 
 func Bootstrap(appContainer di.App, cfg config.ServerConfig) error {
 	app := fiber.New()
-
 	app.Use(
 		swagger.New(swagger.Config{
 			BasePath: "/",

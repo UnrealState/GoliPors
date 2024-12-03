@@ -1,0 +1,8 @@
+services:
+  golipors-app:
+    container_name: golipors-app
+    ports:
+      - "8080:8080"
+    build:
+      context: ../../
+      dockerfile: build/project/Dockerfile

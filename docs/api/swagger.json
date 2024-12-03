@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is a sample swagger for Fiber",
-        "title": "Fiber Example API",
+        "description": "An online form platform",
+        "title": "GoliPors Api Doc",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "API Support",
