@@ -1,14 +1,18 @@
 package app
 
 import (
+	"fmt"
 	"golipors/config"
+	redisAdapter "golipors/pkg/adapters/cache"
+	"golipors/pkg/cache"
 	"golipors/pkg/postgres"
 	"gorm.io/gorm"
 )
 
 type app struct {
-	db  *gorm.DB
-	cfg config.Config
+	db    *gorm.DB
+	redis cache.Provider
+	cfg   config.Config
 	// ToDo define services
 }
 
@@ -35,8 +39,7 @@ func (a *app) setDB() error {
 }
 
 func (a *app) setRedis() {
-	// ToDo Initialize redis connection
-	/*a.redisCache = redisAdapter.NewRedisProvider(fmt.Sprintf("%s:%d", a.cfg.Redis.Host, a.cfg.Redis.Port))*/
+	a.redis = redisAdapter.NewRedisProvider(fmt.Sprintf("%s:%d", a.cfg.Redis.Host, a.cfg.Redis.Port))
 }
 
 func NewApp(cfg config.Config) (App, error) {
