@@ -8,6 +8,11 @@ services:
       - golipors-network
     env_file: ./postgres/.env
     restart: always
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   golipors-network:
