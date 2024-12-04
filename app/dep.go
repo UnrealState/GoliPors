@@ -1,23 +1,32 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"golipors/config"
-	redisAdapter "golipors/pkg/adapters/cache"
+	"golipors/internal/user"
+	"golipors/pkg/adapters/storage"
 	"golipors/pkg/cache"
 	"golipors/pkg/postgres"
 	"gorm.io/gorm"
+
+	userPort "golipors/internal/user/port"
+	redisAdapter "golipors/pkg/adapters/cache"
 )
 
 type app struct {
-	db    *gorm.DB
-	redis cache.Provider
-	cfg   config.Config
-	// ToDo define services
+	db          *gorm.DB
+	redis       cache.Provider
+	cfg         config.Config
+	userService userPort.Service
 }
 
 func (a *app) Config() config.Config {
 	return a.cfg
+}
+
+func (a *app) UserService() userPort.Service {
+	return a.userService
 }
 
 func (a *app) setDB() error {
@@ -42,16 +51,24 @@ func (a *app) setRedis() {
 	a.redis = redisAdapter.NewRedisProvider(fmt.Sprintf("%s:%d", a.cfg.Redis.Host, a.cfg.Redis.Port))
 }
 
+func (a *app) Cache() cache.Provider {
+	return a.redis
+}
+
 func NewApp(cfg config.Config) (App, error) {
-	a := &app{
-		cfg: cfg,
-	}
+	a := &app{cfg: cfg}
 
 	if err := a.setDB(); err != nil {
 		return nil, err
 	}
 
 	a.setRedis()
+
+	a.userService = user.NewService(storage.NewUserRepo(a.db, cfg.Server.PasswordSecret))
+
+	if err := a.userService.RunMigrations(); err != nil {
+		return nil, errors.New(fmt.Sprintf("Failed to run migrations: %v", err))
+	}
 
 	return a, nil
 }

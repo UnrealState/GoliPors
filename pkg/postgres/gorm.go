@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"fmt"
-	"golipors/pkg/models"
 	"gorm.io/gorm/logger"
 
 	"gorm.io/driver/postgres"
@@ -28,25 +27,6 @@ func NewPsqlGormConnection(opt DBConnOptions) (*gorm.DB, error) {
 		Logger: logger.Discard,
 	})
 
-	if err != nil {
-		return db, err
-	}
-
-	// Migrate the schema
-	err = db.AutoMigrate(
-		&models.User{},
-		&models.SystemRole{},
-		&models.Survey{},
-		&models.SurveyRole{},
-		&models.Question{},
-		&models.Option{},
-		&models.Response{},
-		&models.Chatroom{},
-		&models.Message{},
-		&models.Notification{},
-		&models.Transaction{},
-		&models.LogEntry{},
-	)
 	if err != nil {
 		return db, err
 	}

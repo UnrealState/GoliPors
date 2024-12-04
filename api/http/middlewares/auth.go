@@ -21,6 +21,6 @@ func Authorization(c *fiber.Ctx, cfg config.ServerConfig) error {
 		})
 	}
 
-	c.Locals("clams", clams)
+	c.Locals(jwt.UserClaimKey, clams)
 	return c.Next()
 }
