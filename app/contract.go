@@ -2,9 +2,10 @@ package app
 
 import (
 	"golipors/config"
+	userPort "golipors/internal/user/port"
 )
 
 type App interface {
 	Config() config.Config
-	// ToDo Define services
+	UserService() userPort.Service
 }
