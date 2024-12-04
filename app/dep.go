@@ -43,9 +43,7 @@ func (a *app) setRedis() {
 }
 
 func NewApp(cfg config.Config) (App, error) {
-	a := &app{
-		cfg: cfg,
-	}
+	a := &app{cfg: cfg}
 
 	if err := a.setDB(); err != nil {
 		return nil, err
