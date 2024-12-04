@@ -23,7 +23,7 @@ func Bootstrap(appContainer di.App, cfg config.ServerConfig) error {
 
 	api := app.Group("/api/v1")
 
-	handlers.RegisterAccountHandlers(api, appContainer)
+	handlers.RegisterAccountHandlers(api, appContainer, cfg)
 
 	return app.Listen(fmt.Sprintf(":%d", cfg.Port))
 }
