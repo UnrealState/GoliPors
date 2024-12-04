@@ -4,6 +4,7 @@ type Config struct {
 	DB     DBConfig     `json:"db"`
 	Server ServerConfig `json:"server"`
 	Redis  RedisConfig  `json:"redis"`
+	SMTP   SMTPConfig   `json:"smtp"`
 }
 
 type DBConfig struct {
@@ -27,6 +28,14 @@ type ServerConfig struct {
 type RedisConfig struct {
 	Host string `json:"host"`
 	Port uint   `json:"port"`
+}
+
+type SMTPConfig struct {
+	Email    string `json:"email"`
+	Host     string `json:"host"`
+	Port     uint   `json:"port"`
+	User     string `json:"user"`
+	Password string `json:"password"`
 }
 
 // ToDO ELK config
