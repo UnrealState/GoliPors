@@ -51,6 +51,10 @@ func (a *app) setRedis() {
 	a.redis = redisAdapter.NewRedisProvider(fmt.Sprintf("%s:%d", a.cfg.Redis.Host, a.cfg.Redis.Port))
 }
 
+func (a *app) Cache() cache.Provider {
+	return a.redis
+}
+
 func NewApp(cfg config.Config) (App, error) {
 	a := &app{cfg: cfg}
 
