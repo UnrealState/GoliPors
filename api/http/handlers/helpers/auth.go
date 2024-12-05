@@ -2,8 +2,21 @@ package helpers
 
 import (
 	"crypto/rand"
+	"github.com/gofiber/fiber/v2"
+	jwt2 "github.com/golang-jwt/jwt/v5"
+	"golipors/pkg/jwt"
 	"regexp"
 )
+
+func UserClaims(ctx *fiber.Ctx) *jwt.UserClaims {
+	if u := ctx.Locals("user"); u != nil {
+		userClaims, ok := u.(*jwt2.Token).Claims.(*jwt.UserClaims)
+		if ok {
+			return userClaims
+		}
+	}
+	return nil
+}
 
 func GenerateOTP() (string, error) {
 	n := 6

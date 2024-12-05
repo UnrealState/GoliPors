@@ -13,8 +13,8 @@ type Adapter struct {
 	email string
 }
 
-func NewEmailAdapter(cfg config.SMTPConfig) *Adapter {
-	return &Adapter{
+func NewEmailAdapter(cfg config.SMTPConfig) Adapter {
+	return Adapter{
 		host:  cfg.Host,
 		port:  cfg.Port,
 		user:  cfg.User,
