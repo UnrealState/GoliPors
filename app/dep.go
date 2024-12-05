@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"golipors/config"
@@ -13,6 +14,7 @@ import (
 
 	userPort "golipors/internal/user/port"
 	redisAdapter "golipors/pkg/adapters/cache"
+	appCtx "golipors/pkg/context"
 )
 
 type app struct {
@@ -23,12 +25,29 @@ type app struct {
 	mailService email.Adapter
 }
 
+func (a *app) DB() *gorm.DB {
+	return a.db
+}
+
 func (a *app) Config() config.Config {
 	return a.cfg
 }
 
-func (a *app) UserService() userPort.Service {
-	return a.userService
+func (a *app) UserService(ctx context.Context) userPort.Service {
+	db := appCtx.GetDB(ctx)
+
+	if db == nil {
+		if a.userService == nil {
+			a.userService = a.userServiceWithDB(a.db)
+		}
+		return a.userService
+	}
+
+	return a.userServiceWithDB(db)
+}
+
+func (a *app) userServiceWithDB(db *gorm.DB) userPort.Service {
+	return user.NewService(storage.NewUserRepo(db, a.cfg.Server.PasswordSecret))
 }
 
 func (a *app) Cache() cache.Provider {
@@ -74,8 +93,6 @@ func NewApp(cfg config.Config) (App, error) {
 
 	a.setRedis()
 	a.setEmailService()
-
-	a.userService = user.NewService(storage.NewUserRepo(a.db, cfg.Server.PasswordSecret))
 
 	if err := a.userService.RunMigrations(); err != nil {
 		return nil, errors.New(fmt.Sprintf("Failed to run migrations: %v", err))
