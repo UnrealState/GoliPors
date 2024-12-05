@@ -21,7 +21,7 @@ func Bootstrap(appContainer di.App, cfg config.ServerConfig) error {
 		middlerwares.RateLimiter(),
 	)
 
-	api := app.Group("/api/v1")
+	api := app.Group("/api/v1", middlerwares.SetUserContext)
 
 	handlers.RegisterAccountHandlers(api, appContainer, cfg)
 
