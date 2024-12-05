@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"golipors/config"
 	"golipors/internal/user"
+	"golipors/pkg/adapters/email"
 	"golipors/pkg/adapters/storage"
 	"golipors/pkg/cache"
 	"golipors/pkg/postgres"
@@ -19,6 +20,7 @@ type app struct {
 	redis       cache.Provider
 	cfg         config.Config
 	userService userPort.Service
+	mailService email.Adapter
 }
 
 func (a *app) Config() config.Config {
@@ -27,6 +29,14 @@ func (a *app) Config() config.Config {
 
 func (a *app) UserService() userPort.Service {
 	return a.userService
+}
+
+func (a *app) Cache() cache.Provider {
+	return a.redis
+}
+
+func (a *app) MailService() email.Adapter {
+	return a.mailService
 }
 
 func (a *app) setDB() error {
@@ -51,8 +61,8 @@ func (a *app) setRedis() {
 	a.redis = redisAdapter.NewRedisProvider(fmt.Sprintf("%s:%d", a.cfg.Redis.Host, a.cfg.Redis.Port))
 }
 
-func (a *app) Cache() cache.Provider {
-	return a.redis
+func (a *app) setEmailService() {
+	a.mailService = email.NewEmailAdapter(a.cfg.SMTP)
 }
 
 func NewApp(cfg config.Config) (App, error) {
@@ -63,6 +73,7 @@ func NewApp(cfg config.Config) (App, error) {
 	}
 
 	a.setRedis()
+	a.setEmailService()
 
 	a.userService = user.NewService(storage.NewUserRepo(a.db, cfg.Server.PasswordSecret))
 
