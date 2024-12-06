@@ -4,24 +4,27 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
+	"strconv"
+	"time"
+
 	"github.com/google/uuid"
 	"golipors/api/http/handlers/helpers"
 	"golipors/api/http/handlers/presenter"
 	"golipors/api/http/types"
 	"golipors/app"
 	"golipors/config"
-	userService "golipors/internal/user"
-	userPort "golipors/internal/user/port"
 	"golipors/pkg/adapters/email"
 	"golipors/pkg/cache"
-	"log"
-	"strconv"
-	"time"
+
+	userService "golipors/internal/user"
+	userPort "golipors/internal/user/port"
+	jwt2 "golipors/pkg/jwt"
 )
 
 type AccountService struct {
 	svc                              userPort.Service
-	cacheService                     cache.Provider
+	authCache                        *cache.ObjectCache[*presenter.LoginCacheSession]
 	emailService                     email.Adapter
 	authSecret                       string
 	expMin, refreshExpMin, otpTtlMin uint
@@ -31,7 +34,7 @@ var (
 	ErrUserCreationValidation = userService.ErrUserCreationValidation
 	ErrUserOnCreate           = userService.ErrUserOnCreate
 	ErrUserNotFound           = userService.ErrUserNotFound
-	ErrInvalidPassword        = userService.ErrInvalidPassword
+	ErrCreatingToken          = errors.New("cannot create token")
 )
 
 func NewAccountService(
@@ -43,7 +46,7 @@ func NewAccountService(
 ) *AccountService {
 	return &AccountService{
 		svc:           svc,
-		cacheService:  cacheService,
+		authCache:     cache.NewJsonObjectCache[*presenter.LoginCacheSession](cacheService, "auth."),
 		emailService:  emailService,
 		authSecret:    authSecret,
 		expMin:        expMin,
@@ -70,18 +73,16 @@ func (as *AccountService) Login(c context.Context, req types.LoginRequest) (*typ
 	user, err := as.svc.GetUserByUsernamePassword(c, req.Email, req.Password)
 
 	if err != nil {
-		return &types.LoginResponse{}, err
+		return nil, err
 	}
 
 	code, err := helpers.GenerateOTP()
 
 	if err != nil {
-		return &types.LoginResponse{}, errors.New("error generating OTP")
+		return nil, errors.New("error generating OTP")
 	}
 
 	log.Println("OTP sent for user", user.ID, "code:", code)
-
-	oc := cache.NewJsonObjectCache[presenter.LoginCacheSession](as.cacheService, "auth.")
 
 	err = as.emailService.SendText(
 		req.Email,
@@ -91,18 +92,67 @@ func (as *AccountService) Login(c context.Context, req types.LoginRequest) (*typ
 
 	log.Println(err)
 
-	err = oc.Set(c, strconv.Itoa(int(user.ID)), time.Minute*time.Duration(as.otpTtlMin), presenter.LoginCacheSession{
-		SessionID: uuid.New(),
-		UserID:    user.ID,
-		Code:      code,
-	})
+	err = as.authCache.Set(
+		c, strconv.Itoa(int(user.ID)),
+		time.Minute*time.Duration(as.otpTtlMin),
+		&presenter.LoginCacheSession{
+			SessionID: uuid.New(),
+			UserID:    user.ID,
+			Code:      code,
+		},
+	)
 
 	if err != nil {
-		return &types.LoginResponse{}, err
+		return nil, err
 	}
 
 	return &types.LoginResponse{
 		Code:      code,
 		SessionId: uuid.New(),
+	}, nil
+}
+
+func (as *AccountService) VerifyOtp(c context.Context, req types.VerifyOTPRequest) (*types.VerifyOTPResponse, error) {
+	user, err := as.svc.GetUserByEmail(c, req.Email)
+
+	if err != nil {
+		return &types.VerifyOTPResponse{}, err
+	}
+
+	authSession, err := as.authCache.Get(c, strconv.Itoa(int(user.ID)))
+
+	if err != nil {
+		return nil, err
+	}
+
+	if authSession == nil ||
+		authSession.UserID <= 0 ||
+		authSession.Code != req.Code ||
+		authSession.SessionID != req.SessionId ||
+		authSession.UserID != user.ID {
+		return nil, ErrUserNotFound
+	}
+
+	err = as.authCache.Del(c, strconv.Itoa(int(user.ID)))
+
+	if err != nil {
+		return nil, err
+	}
+
+	var (
+		authExp    = time.Now().Add(time.Minute * time.Duration(as.expMin))
+		refreshExp = time.Now().Add(time.Minute * time.Duration(as.refreshExpMin))
+	)
+
+	accessToken, err := jwt2.CreateToken([]byte(as.authSecret), jwt2.GenerateUserClaims(user, authExp))
+	refreshToken, err := jwt2.CreateToken([]byte(as.authSecret), jwt2.GenerateUserClaims(user, refreshExp))
+
+	if err != nil {
+		return nil, ErrCreatingToken
+	}
+
+	return &types.VerifyOTPResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
 	}, nil
 }
