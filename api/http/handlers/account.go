@@ -71,30 +71,38 @@ func Register(svcGetter helpers.ServiceGetter[*services.AccountService]) fiber.H
 
 func VerifyOtp(svcGetter helpers.ServiceGetter[*services.AccountService]) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		/*
-			var (
-				authExp    = time.Now().Add(time.Minute * time.Duration(cfg.AuthExpirationMinutes))
-				refreshExp = time.Now().Add(time.Minute * time.Duration(cfg.AuthRefreshMinutes))
-			)
+		svc := svcGetter(c.UserContext())
+		body := new(types.VerifyOTPRequest)
 
-			user := &userDomain.User{}
+		err := helpers.ParseRequestBody[*types.VerifyOTPRequest](c, &body)
 
-			accessToken, err := jwt2.CreateToken([]byte(cfg.Secret), jwt2.GenerateUserClaims(user, authExp))
-			refreshToken, err := jwt2.CreateToken([]byte(cfg.Secret), jwt2.GenerateUserClaims(user, refreshExp))
+		if err != nil {
+			return err
+		}
 
-			if err != nil {
-				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-					"error": "Cannot create token",
+		if !helpers.IsValidEmail(body.Email) {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "invalid email",
+			})
+		}
+
+		response, err := svc.VerifyOtp(c.UserContext(), *body)
+
+		if err != nil {
+			switch {
+			case errors.Is(err, services.ErrUserNotFound):
+				return c.Status(http.StatusNotFound).JSON(fiber.Map{
+					"error": "Incorrect code, session or email",
+				})
+			default:
+				return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+					"error": "Internal server error",
+					"msg":   err.Error(),
 				})
 			}
+		}
 
-			// Successful authentication
-			return c.Status(http.StatusOK).JSON(&presenter.UserToken{
-				AuthorizationToken: accessToken,
-				RefreshToken:       refreshToken,
-				ExpiresAt:          authExp.Unix(),
-			})*/
-		return nil
+		return c.JSON(response)
 	}
 }
 
