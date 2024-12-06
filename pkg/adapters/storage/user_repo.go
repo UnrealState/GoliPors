@@ -65,3 +65,15 @@ func (r *userRepo) RunMigrations() error {
 	migrator := gormigrate.New(r.db, gormigrate.DefaultOptions, migrations.GetUserMigrations())
 	return migrator.Migrate()
 }
+
+func (r *userRepo) FindByEmail(ctx context.Context, email string) (*domain.User, error) {
+	var user types.User
+
+	// Retrieve the user by username
+	err := r.db.WithContext(ctx).Where("email = ?", email).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return mapper.ToDomainUser(&user), nil
+}
