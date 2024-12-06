@@ -55,7 +55,7 @@ func NewAccountService(
 func AccountServiceGetter(appContainer app.App, cfg config.ServerConfig) helpers.ServiceGetter[*AccountService] {
 	return func(ctx context.Context) *AccountService {
 		return NewAccountService(
-			appContainer.UserService(),
+			appContainer.UserService(ctx),
 			appContainer.Cache(),
 			appContainer.MailService(),
 			cfg.Secret,
