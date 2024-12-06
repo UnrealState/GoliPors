@@ -26,11 +26,8 @@ func NewService(repo port.Repo) port.Service {
 		repo: repo,
 	}
 }
-func (s *service) GetUserByUsernamePassword(ctx context.Context, username string, password string) (*domain.User, error) {
-	if username == "" || password == "" {
-		return nil, ErrUserCreationValidation
-	}
 
+func (s *service) GetUserByUsernamePassword(ctx context.Context, username string, password string) (*domain.User, error) {
 	user, err := s.repo.FindByUsernamePassword(ctx, username, password)
 
 	if err != nil {
@@ -44,7 +41,21 @@ func (s *service) GetUserByUsernamePassword(ctx context.Context, username string
 
 	return user, nil
 }
-
 func (s *service) RunMigrations() error {
 	return s.repo.RunMigrations()
+}
+
+func (s *service) GetUserByEmail(ctx context.Context, email string) (*domain.User, error) {
+	user, err := s.repo.FindByEmail(ctx, email)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound) || errors.Is(err, ErrInvalidPassword):
+			return nil, ErrUserNotFound
+		default:
+			return nil, errors.New(fmt.Sprintf("failed to authenticate user: %s", err))
+		}
+	}
+
+	return user, nil
 }
