@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/gofiber/fiber/v2"
 	"golipors/api/http/handlers/helpers"
+	middlerwares "golipors/api/http/middlewares"
 	"golipors/api/http/services"
 	"golipors/api/http/types"
 	"golipors/app"
@@ -14,6 +15,8 @@ import (
 func RegisterAccountHandlers(router fiber.Router, appContainer app.App, cfg config.ServerConfig) {
 	accountGroup := router.Group("/account")
 	accountSvcGetter := services.AccountServiceGetter(appContainer, cfg)
+
+	accountGroup.Use(middlerwares.SetTransaction(appContainer.DB()))
 
 	accountGroup.Post("/login", Login(accountSvcGetter))
 	accountGroup.Post("/register", Register(accountSvcGetter))
