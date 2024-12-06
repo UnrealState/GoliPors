@@ -2,11 +2,11 @@
 package mapper
 
 import (
-	"golipors/api/http/dto"
+	"golipors/api/http/handlers/presenter"
 	"golipors/internal/survey/domain"
 )
 
-func CreateSurveyRequestToDomain(req dto.CreateSurveyRequest, ownerID uint) domain.Survey {
+func CreateSurveyRequestToDomain(req presenter.CreateSurveyRequest, ownerID uint) domain.Survey {
 	return domain.Survey{
 		Title:                    req.Title,
 		CreationTime:             req.CreationTime,
@@ -23,16 +23,16 @@ func CreateSurveyRequestToDomain(req dto.CreateSurveyRequest, ownerID uint) doma
 	}
 }
 
-func DomainSurveyToCreateSurveyResponse(survey domain.Survey) dto.CreateSurveyResponse {
-	return dto.CreateSurveyResponse{
+func DomainSurveyToCreateSurveyResponse(survey domain.Survey) presenter.CreateSurveyResponse {
+	return presenter.CreateSurveyResponse{
 		ID:      survey.ID,
 		Title:   survey.Title,
 		OwnerID: survey.OwnerID,
 	}
 }
 
-func DomainSurveyToGetSurveyResponse(survey domain.Survey) dto.GetSurveyResponse {
-	return dto.GetSurveyResponse{
+func DomainSurveyToGetSurveyResponse(survey domain.Survey) presenter.GetSurveyResponse {
+	return presenter.GetSurveyResponse{
 		ID:                       survey.ID,
 		Title:                    survey.Title,
 		CreationTime:             survey.CreationTime,
@@ -48,7 +48,7 @@ func DomainSurveyToGetSurveyResponse(survey domain.Survey) dto.GetSurveyResponse
 	}
 }
 
-func UpdateSurveyRequestToDomain(req dto.UpdateSurveyRequest) domain.Survey {
+func UpdateSurveyRequestToDomain(req presenter.UpdateSurveyRequest) domain.Survey {
 	survey := domain.Survey{}
 
 	if req.Title != nil {
@@ -85,8 +85,8 @@ func UpdateSurveyRequestToDomain(req dto.UpdateSurveyRequest) domain.Survey {
 	return survey
 }
 
-func DomainSurveyToUpdateSurveyResponse(survey domain.Survey) dto.UpdateSurveyResponse {
-	return dto.UpdateSurveyResponse{
+func DomainSurveyToUpdateSurveyResponse(survey domain.Survey) presenter.UpdateSurveyResponse {
+	return presenter.UpdateSurveyResponse{
 		ID:    survey.ID,
 		Title: survey.Title,
 	}

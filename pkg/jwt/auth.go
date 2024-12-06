@@ -3,12 +3,25 @@ package jwt
 import (
 	"errors"
 	jwt2 "github.com/golang-jwt/jwt/v5"
+	"golipors/internal/user/domain"
+	"time"
 )
 
 const UserClaimKey = "User-Claims"
 
 func CreateToken(secret []byte, claims *UserClaims) (string, error) {
 	return jwt2.NewWithClaims(jwt2.SigningMethodHS512, claims).SignedString(secret)
+}
+
+func GenerateUserClaims(user *domain.User, exp time.Time) *UserClaims {
+	return &UserClaims{
+		RegisteredClaims: jwt2.RegisteredClaims{
+			ExpiresAt: &jwt2.NumericDate{
+				Time: exp,
+			},
+		},
+		UserID: uint(user.ID),
+	}
 }
 
 func ParseToken(tokenString string, secret []byte) (*UserClaims, error) {

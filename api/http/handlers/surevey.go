@@ -3,14 +3,14 @@ package handlers
 
 import (
 	"fmt"
-	"golipors/api/http/dto"
-	"golipors/api/http/mapper"
-	"golipors/internal/survey/port"
 	"net/http"
 	"strconv"
 
-	"github.com/go-playground/validator/v10"
+	"golipors/api/http/handlers/presenter"
+	"golipors/api/http/mapper"
+	"golipors/internal/survey/port"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -35,21 +35,20 @@ func (h *SurveyHandler) RegisterRoutes(api fiber.Router) {
 
 // CreateSurvey handles POST /api/surveys
 func (h *SurveyHandler) CreateSurvey(c *fiber.Ctx) error {
-	var req dto.CreateSurveyRequest
+	var req presenter.CreateSurveyRequest
 
-	// Parse request body
+	// Parse the request body
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid request body",
 		})
 	}
 
-	// Validate request body
+	// Validate request input
 	if err := validate.Struct(req); err != nil {
-		// Extract validation errors
 		validationErrors := make(map[string]string)
-		for _, err := range err.(validator.ValidationErrors) {
-			validationErrors[err.Field()] = fmt.Sprintf("Validation failed on '%s' with tag '%s'", err.Field(), err.Tag())
+		for _, e := range err.(validator.ValidationErrors) {
+			validationErrors[e.Field()] = fmt.Sprintf("Validation failed on '%s' with tag '%s'", e.Field(), e.Tag())
 		}
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"error":   "Validation failed",
@@ -57,13 +56,13 @@ func (h *SurveyHandler) CreateSurvey(c *fiber.Ctx) error {
 		})
 	}
 
-	// Assuming owner ID is retrieved from context (e.g., after authentication)
-	ownerID := uint(1) // Placeholder
+	// Example: Retrieve ownerID from authenticated user context; here, we use a placeholder
+	ownerID := uint(1)
 
-	// Convert DTO to domain model
+	// Convert from presenter to domain model
 	survey := mapper.CreateSurveyRequestToDomain(req, ownerID)
 
-	// Create survey
+	// Create survey using the service
 	surveyID, err := h.service.CreateSurvey(c.Context(), survey)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
@@ -71,8 +70,8 @@ func (h *SurveyHandler) CreateSurvey(c *fiber.Ctx) error {
 		})
 	}
 
-	// Build response
-	response := dto.CreateSurveyResponse{
+	// Build response using presenter
+	response := presenter.CreateSurveyResponse{
 		ID:      surveyID,
 		Title:   survey.Title,
 		OwnerID: ownerID,
@@ -117,13 +116,14 @@ func (h *SurveyHandler) UpdateSurvey(c *fiber.Ctx) error {
 		})
 	}
 
-	var req dto.UpdateSurveyRequest
+	var req presenter.UpdateSurveyRequest
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid request body",
 		})
 	}
 
+	// Convert from presenter to domain model
 	survey := mapper.UpdateSurveyRequestToDomain(req)
 	survey.ID = uint(id)
 
@@ -138,7 +138,13 @@ func (h *SurveyHandler) UpdateSurvey(c *fiber.Ctx) error {
 		})
 	}
 
-	updatedSurvey, _ := h.service.GetSurveyByID(c.Context(), uint(id))
+	updatedSurvey, err := h.service.GetSurveyByID(c.Context(), uint(id))
+	if err != nil || updatedSurvey == nil {
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to retrieve updated survey",
+		})
+	}
+
 	response := mapper.DomainSurveyToUpdateSurveyResponse(*updatedSurvey)
 	return c.Status(http.StatusOK).JSON(response)
 }

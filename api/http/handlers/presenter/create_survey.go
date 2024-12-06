@@ -1,5 +1,5 @@
 // api/http/dto/create_survey.go
-package dto
+package presenter
 
 import "time"
 

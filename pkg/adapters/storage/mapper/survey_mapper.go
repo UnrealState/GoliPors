@@ -3,11 +3,11 @@ package mapper
 
 import (
 	"golipors/internal/survey/domain"
-	"golipors/pkg/adapters/storage/models"
+	"golipors/pkg/adapters/storage/types"
 )
 
-func DomainToModel(survey domain.Survey) models.Survey {
-	return models.Survey{
+func DomainToModel(survey domain.Survey) types.Survey {
+	return types.Survey{
 		ID:                       survey.ID,
 		Title:                    survey.Title,
 		CreationTime:             survey.CreationTime,
@@ -26,7 +26,7 @@ func DomainToModel(survey domain.Survey) models.Survey {
 	}
 }
 
-func ModelToDomain(survey models.Survey) domain.Survey {
+func ModelToDomain(survey types.Survey) domain.Survey {
 	return domain.Survey{
 		ID:                       survey.ID,
 		Title:                    survey.Title,

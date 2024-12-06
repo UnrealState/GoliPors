@@ -1,5 +1,5 @@
 // pkg/adapters/storage/models/survey.go
-package models
+package types
 
 import (
 	"time"
