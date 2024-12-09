@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"golipors/config"
 	"golipors/internal/user"
@@ -47,7 +46,13 @@ func (a *app) UserService(ctx context.Context) userPort.Service {
 }
 
 func (a *app) userServiceWithDB(db *gorm.DB) userPort.Service {
-	return user.NewService(storage.NewUserRepo(db, a.cfg.Server.PasswordSecret))
+	a.userService = user.NewService(storage.NewUserRepo(db, a.cfg.Server.PasswordSecret))
+
+	if err := a.userService.RunMigrations(); err != nil {
+		panic("failed to run migrations")
+	}
+
+	return a.userService
 }
 
 func (a *app) Cache() cache.Provider {
@@ -93,10 +98,6 @@ func NewApp(cfg config.Config) (App, error) {
 
 	a.setRedis()
 	a.setEmailService()
-
-	if err := a.userService.RunMigrations(); err != nil {
-		return nil, errors.New(fmt.Sprintf("Failed to run migrations: %v", err))
-	}
 
 	return a, nil
 }

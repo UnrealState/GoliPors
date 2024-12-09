@@ -22,3 +22,13 @@ type VerifyOTPResponse struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
 }
+
+type RegisterRequest struct {
+	Email      string `json:"email" validate:"required,email"`
+	NationalID string `json:"nationalId" validate:"required,len=10"`
+	Password   string `json:"password" validate:"required,min=4"`
+	FirstName  string `json:"first_name" validate:"required"`
+	LastName   string `json:"last_name" validate:"required"`
+	Birthday   string `json:"birthday" validate:"required"`
+	City       string `json:"city"`
+}

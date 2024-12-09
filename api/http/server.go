@@ -1,6 +1,7 @@
 package http
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gofiber/contrib/swagger"
 	"github.com/gofiber/fiber/v2"
@@ -11,7 +12,11 @@ import (
 )
 
 func Bootstrap(appContainer di.App, cfg config.ServerConfig) error {
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		JSONEncoder: json.Marshal,
+		JSONDecoder: json.Unmarshal,
+	})
+
 	app.Use(
 		swagger.New(swagger.Config{
 			BasePath: "/",
