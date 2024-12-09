@@ -3,6 +3,7 @@ package mapper
 import (
 	"golipors/internal/user/domain"
 	"golipors/pkg/adapters/storage/types"
+	"golipors/pkg/hash"
 	"gorm.io/gorm"
 )
 
@@ -30,6 +31,14 @@ func ToModelUser(d *domain.User) *types.User {
 		return nil
 	}
 
+	bcrypt := hash.NewBcryptHasher()
+
+	password, err := bcrypt.HashPassword(d.Password)
+
+	if err != nil {
+		return nil
+	}
+
 	return &types.User{
 		Model: gorm.Model{
 			ID:        uint(d.ID),
@@ -38,7 +47,7 @@ func ToModelUser(d *domain.User) *types.User {
 		},
 		NationalID:    d.NationalID,
 		Email:         d.Email,
-		Password:      d.Password,
+		Password:      password,
 		FirstName:     d.FirstName,
 		LastName:      d.LastName,
 		Birthday:      d.Birthday,
