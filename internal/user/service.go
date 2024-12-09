@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"golipors/internal/user/domain"
 	"golipors/internal/user/port"
+	"golipors/pkg/adapters"
 	"gorm.io/gorm"
 )
 
@@ -19,10 +20,10 @@ var (
 
 type service struct {
 	repo          port.Repo
-	casbinAdapter port.CasbinAdapter
+	casbinAdapter adapters.CasbinAdapter
 }
 
-func NewService(repo port.Repo, casbinAdapter port.CasbinAdapter) port.Service {
+func NewService(repo port.Repo, casbinAdapter adapters.CasbinAdapter) port.Service {
 	return &service{
 		repo:          repo,
 		casbinAdapter: casbinAdapter,

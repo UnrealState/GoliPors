@@ -1,4 +1,4 @@
-package port
+package adapters
 
 import (
 	"github.com/casbin/casbin/v2"
