@@ -10,19 +10,19 @@ func LoadPolicies(enforcer *casbin.Enforcer) error {
 	// Define policies: [role, permission1, permission2, ...]
 	policies := [][]string{
 		// Superadmin role with full permissions
-		{"superadmin", "admin:manageUsers", "admin:manageSettings", "dashboard:view", "settings:update", "content:create", "content:update", "content:delete"},
+		{"superadmin", "user:create", "user:view", "user:edit", "user:delete", "survey:create", "survey:manage", "survey:view", "answer:manage", "answer:view", "role:create", "admin:create"},
 
 		// Admin role with permissions for user management and content creation
-		{"admin", "user:view", "user:edit", "content:create", "content:update"},
+		{"admin", "user:view", "user:edit", "survey:create", "survey:manage", "survey:view", "answer:manage", "answer:view"},
 
 		// Editor role with content management permissions
-		{"editor", "content:create", "content:update", "content:delete"},
+		{"editor", "survey:create", "survey:manage", "survey:view", "answer:manage", "answer:view"},
 
 		// User role with profile management permissions
-		{"user", "profile:view", "profile:update"},
+		{"user", "survey:create", "survey:view", "answer:create"},
 
 		// Owner role with permission to manage and view their profile
-		{"owner", "owner:manageProfile", "owner:viewProfile"},
+		{"owner", "survey:start", "survey:finish", "survey:view", "answer:manage", "answer:view", "survey:assignUserPermission"},
 	}
 
 	// Add policies to the enforcer
