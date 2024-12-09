@@ -43,7 +43,6 @@ func Login(svcGetter helpers.ServiceGetter[*services.AccountService]) fiber.Hand
 		response, err := svc.Login(c.UserContext(), *body)
 
 		if err != nil {
-
 			switch {
 			case errors.Is(err, services.ErrUserNotFound):
 				return c.Status(http.StatusNotFound).JSON(fiber.Map{

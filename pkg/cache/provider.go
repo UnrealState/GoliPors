@@ -57,12 +57,12 @@ func (c *ObjectCache[T]) Set(ctx context.Context, key string, ttl time.Duration,
 		return err
 	}
 
-	return c.provider.Set(ctx, key, ttl, data)
+	return c.provider.Set(ctx, c.createKey(key), ttl, data)
 }
 
 func (c *ObjectCache[T]) Get(ctx context.Context, key string) (T, error) {
 	var t = new(T)
-	data, err := c.provider.Get(ctx, key)
+	data, err := c.provider.Get(ctx, c.createKey(key))
 	if err != nil {
 		if errors.Is(err, ErrCacheMiss) {
 			return *t, nil

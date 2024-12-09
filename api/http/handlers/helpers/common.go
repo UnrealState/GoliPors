@@ -29,7 +29,6 @@ func ValidateRequestBody[T any](body T) map[string]string {
 
 func ParseRequestBody[T any](c *fiber.Ctx, body *T) fiber.Map {
 	errParse := c.BodyParser(body)
-	fmt.Printf("%v\n", body)
 	msg := fiber.Map{"error": ErrRequiredBodyNotFound.Error()}
 
 	if errParse != nil {
