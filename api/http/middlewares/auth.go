@@ -1,16 +1,16 @@
 package middlewares
 
 import (
+	"github.com/casbin/casbin/v2"
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 	"golipors/internal/user/domain"
 	"golipors/internal/user/port"
 	"golipors/pkg/jwt"
-	"strings"
 )
 
 // AuthorizationWithRBAC middleware using jwtware
-func AuthorizationWithRBAC(secret []byte, userService port.Service, requiredRoles ...string) fiber.Handler {
+func AuthorizationWithRBAC(secret []byte, userService port.Service, enforcer *casbin.Enforcer, requiredPermissions ...string) fiber.Handler {
 	return jwtware.New(jwtware.Config{
 		SigningKey:  jwtware.SigningKey{Key: secret},
 		Claims:      &jwt.UserClaims{},      // Use your custom claims struct
@@ -29,12 +29,12 @@ func AuthorizationWithRBAC(secret []byte, userService port.Service, requiredRole
 				return fiber.ErrUnauthorized
 			}
 
-			// Check if the user's role matches the required roles
-			if !isRoleAllowed(user.Role, requiredRoles) {
+			// Check if the user has the required permissions using Casbin
+			if !hasPermission(enforcer, user.Role, requiredPermissions) {
 				return fiber.ErrForbidden
 			}
 
-			// Pass control to the next middleware or handler
+			// Proceed to the next handler if the permission check passes
 			return ctx.Next()
 		},
 		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
@@ -43,16 +43,14 @@ func AuthorizationWithRBAC(secret []byte, userService port.Service, requiredRole
 	})
 }
 
-// Helper function to validate roles
-func isRoleAllowed(userRole string, allowedRoles []string) bool {
-	if len(allowedRoles) == 0 {
-		// No role restriction, allow all
-		return true
-	}
-	for _, role := range allowedRoles {
-		if strings.EqualFold(userRole, role) {
-			return true
+// Helper function to check if the user's role has the required permission using Casbin
+func hasPermission(enforcer *casbin.Enforcer, userRole string, requiredPermissions []string) bool {
+	// Check if the user's role has the required permission in Casbin
+	for _, permission := range requiredPermissions {
+		allowed, err := enforcer.Enforce(userRole, permission)
+		if err != nil || !allowed {
+			return false
 		}
 	}
-	return false
+	return true
 }
