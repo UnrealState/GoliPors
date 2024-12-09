@@ -17,6 +17,7 @@ type User struct {
 	City          string
 	WalletBalance float64
 	VoteBalance   int
+	Role          string
 	CreatedAt     time.Time
 	DeletedAt     time.Time
 }

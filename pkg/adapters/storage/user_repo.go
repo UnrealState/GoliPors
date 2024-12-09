@@ -2,6 +2,8 @@ package storage
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"github.com/go-gormigrate/gormigrate/v2"
 	userService "golipors/internal/user"
 	"golipors/internal/user/domain"
@@ -63,4 +65,21 @@ func (r *userRepo) Insert(ctx context.Context, user *domain.User) (domain.UserID
 	newU := mapper.ToModelUser(user)
 
 	return domain.UserID(newU.ID), r.db.WithContext(ctx).Create(newU).Error
+}
+func (r *userRepo) FindByID(ctx context.Context, id domain.UserID) (*domain.User, error) {
+	var user domain.User
+	if err := r.db.WithContext(ctx).First(&user, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, gorm.ErrRecordNotFound
+		}
+		return nil, fmt.Errorf("failed to find user by ID: %w", err)
+	}
+	return &user, nil
+}
+
+func (r *userRepo) Update(ctx context.Context, user *domain.User) error {
+	if err := r.db.WithContext(ctx).Save(user).Error; err != nil {
+		return fmt.Errorf("failed to update user: %w", err)
+	}
+	return nil
 }
