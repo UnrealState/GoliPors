@@ -47,3 +47,8 @@ func ParseRequestBody[T any](c *fiber.Ctx, body *T) fiber.Map {
 
 	return nil
 }
+
+func IsValidDate(date string) (time.Time, error) {
+	const layout = "2006-01-02" // Reference layout for YYYY-MM-DD
+	return time.Parse(layout, date)
+}

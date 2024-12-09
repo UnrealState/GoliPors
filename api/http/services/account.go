@@ -31,10 +31,11 @@ type AccountService struct {
 }
 
 var (
-	ErrUserCreationValidation = userService.ErrUserCreationValidation
-	ErrUserOnCreate           = userService.ErrUserOnCreate
-	ErrUserNotFound           = userService.ErrUserNotFound
-	ErrCreatingToken          = errors.New("cannot create token")
+	ErrUserOnCreate      = userService.ErrUserOnCreate
+	ErrUserNotFound      = userService.ErrUserNotFound
+	ErrUserAlreadyExists = userService.ErrUserAlreadyExists
+	ErrCreatingToken     = errors.New("cannot create token")
+	ErrBirthdayInvalid   = errors.New("birthday is invalid")
 )
 
 func NewAccountService(
@@ -155,4 +156,20 @@ func (as *AccountService) VerifyOtp(c context.Context, req types.VerifyOTPReques
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}, nil
+}
+
+func (as *AccountService) Register(c context.Context, req types.RegisterRequest) error {
+	newU, err := presenter.RegisterRequestToUserDomain(req)
+
+	if err != nil {
+		return ErrBirthdayInvalid
+	}
+
+	_, err = as.svc.CreateUser(c, newU)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
