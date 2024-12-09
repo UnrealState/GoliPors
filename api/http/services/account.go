@@ -91,13 +91,17 @@ func (as *AccountService) Login(c context.Context, req types.LoginRequest) (*typ
 		fmt.Sprintf("GoliPors OTP code: %s", code),
 	)
 
-	log.Println(err)
+	reqUUID := uuid.New()
+
+	if err != nil {
+		log.Println("Error while sending otp:", err)
+	}
 
 	err = as.authCache.Set(
 		c, strconv.Itoa(int(user.ID)),
 		time.Minute*time.Duration(as.otpTtlMin),
 		&presenter.LoginCacheSession{
-			SessionID: uuid.New(),
+			SessionID: reqUUID,
 			UserID:    user.ID,
 			Code:      code,
 		},
@@ -109,7 +113,7 @@ func (as *AccountService) Login(c context.Context, req types.LoginRequest) (*typ
 
 	return &types.LoginResponse{
 		Code:      code,
-		SessionId: uuid.New(),
+		SessionId: reqUUID,
 	}, nil
 }
 
