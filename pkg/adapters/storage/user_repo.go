@@ -23,25 +23,6 @@ func NewUserRepo(db *gorm.DB, secret string) port.Repo {
 	return &userRepo{db, secret}
 }
 
-type BcryptHasher struct{}
-
-func (b *BcryptHasher) hashPassword(password string) (string, error) {
-	if len(password) > 72 {
-		return "", userService.ErrPasswordTooLong
-	}
-
-	hashed, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
-	}
-	return string(hashed), nil
-}
-
-func (b *BcryptHasher) validate(hashedPassword, plainPassword string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(plainPassword))
-	return err == nil
-}
-
 func (r *userRepo) FindByUsernamePassword(ctx context.Context, username string, password string) (*domain.User, error) {
 	var user types.User
 
@@ -52,8 +33,8 @@ func (r *userRepo) FindByUsernamePassword(ctx context.Context, username string, 
 	}
 
 	// Validate the plain password against the hashed password
-	bcryptHasher := BcryptHasher{}
-	if !bcryptHasher.validate(user.Password, password) {
+	bcryptHasher := hash.NewBcryptHasher()
+	if !bcryptHasher.Validate(user.Password, password) {
 		return nil, userService.ErrInvalidPassword
 	}
 
