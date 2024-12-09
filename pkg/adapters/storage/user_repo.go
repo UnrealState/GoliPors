@@ -9,8 +9,8 @@ import (
 	"golipors/pkg/adapters/storage/mapper"
 	"golipors/pkg/adapters/storage/migrations"
 	"golipors/pkg/adapters/storage/types"
+	"golipors/pkg/hash"
 
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -57,4 +57,10 @@ func (r *userRepo) FindByEmail(ctx context.Context, email string) (*domain.User,
 	}
 
 	return mapper.ToDomainUser(&user), nil
+}
+
+func (r *userRepo) Insert(ctx context.Context, user *domain.User) (domain.UserID, error) {
+	newU := mapper.ToModelUser(user)
+
+	return domain.UserID(newU.ID), r.db.WithContext(ctx).Create(newU).Error
 }
