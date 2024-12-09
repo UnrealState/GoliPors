@@ -30,10 +30,8 @@ func Login(svcGetter helpers.ServiceGetter[*services.AccountService]) fiber.Hand
 		svc := svcGetter(c.UserContext())
 		body := new(types.LoginRequest)
 
-		err := helpers.ParseRequestBody[*types.LoginRequest](c, &body)
-
-		if err != nil {
-			return err
+		if err := helpers.ParseRequestBody(c, body); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(err)
 		}
 
 		if !helpers.IsValidEmail(body.Email) {
@@ -52,8 +50,8 @@ func Login(svcGetter helpers.ServiceGetter[*services.AccountService]) fiber.Hand
 				})
 			default:
 				return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
-					"error": "Internal server error",
-					"msg":   err.Error(),
+					"error":   "Internal server error",
+					"message": err.Error(),
 				})
 			}
 		}
@@ -63,9 +61,67 @@ func Login(svcGetter helpers.ServiceGetter[*services.AccountService]) fiber.Hand
 }
 
 func Register(svcGetter helpers.ServiceGetter[*services.AccountService]) fiber.Handler {
-	return func(ctx *fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
+		svc := svcGetter(c.UserContext())
+		body := new(types.RegisterRequest)
 
-		return nil
+		if err := helpers.ParseRequestBody(c, body); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(err)
+		}
+
+		if !helpers.IsValidEmail(body.Email) {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "invalid email",
+			})
+		}
+
+		if len(body.Password) > 72 {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "password too long",
+			})
+		}
+
+		if _, err := helpers.IsValidDate(body.Birthday); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error":   "invalid birthday",
+				"message": err.Error(),
+			})
+		}
+
+		if len(body.NationalID) != 10 {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "invalid nationalID",
+			})
+		}
+
+		err := svc.Register(c.UserContext(), *body)
+
+		if err != nil {
+			switch {
+			case errors.Is(err, services.ErrUserOnCreate):
+				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+					"error":   "Error while creating new user",
+					"message": err.Error(),
+				})
+			case errors.Is(err, services.ErrUserAlreadyExists):
+				return c.Status(http.StatusConflict).JSON(fiber.Map{
+					"error": "User already exists",
+				})
+			case errors.Is(err, services.ErrBirthdayInvalid):
+				return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+					"error": "Invalid birthday",
+				})
+			default:
+				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+					"error":   "Internal server error",
+					"message": err.Error(),
+				})
+			}
+		}
+
+		return c.JSON(fiber.Map{
+			"message": "User registered successfully",
+		})
 	}
 }
 
@@ -74,10 +130,8 @@ func VerifyOtp(svcGetter helpers.ServiceGetter[*services.AccountService]) fiber.
 		svc := svcGetter(c.UserContext())
 		body := new(types.VerifyOTPRequest)
 
-		err := helpers.ParseRequestBody[*types.VerifyOTPRequest](c, &body)
-
-		if err != nil {
-			return err
+		if err := helpers.ParseRequestBody[*types.VerifyOTPRequest](c, &body); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(err)
 		}
 
 		if !helpers.IsValidEmail(body.Email) {

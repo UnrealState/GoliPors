@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"time"
 )
 
 type ServiceGetter[T any] func(context.Context) T
@@ -12,10 +13,11 @@ type ServiceGetter[T any] func(context.Context) T
 var validate = validator.New()
 
 func ValidateRequestBody[T any](body T) map[string]string {
-	if err := validate.Struct(body); err != nil {
+	if errs := validate.Struct(body); errs != nil {
 		validationErrors := make(map[string]string)
 
-		for _, err := range err.(validator.ValidationErrors) {
+		// Check if the error is of type `validator.ValidationErrors`
+		for _, err := range errs.(validator.ValidationErrors) {
 			validationErrors[err.Field()] = fmt.Sprintf("Validation failed on '%s' with tag '%s'", err.Field(), err.Tag())
 		}
 
@@ -25,19 +27,27 @@ func ValidateRequestBody[T any](body T) map[string]string {
 	return nil
 }
 
-func ParseRequestBody[T any](c *fiber.Ctx, body *T) error {
+func ParseRequestBody[T any](c *fiber.Ctx, body *T) fiber.Map {
 	errParse := c.BodyParser(body)
-	errValidation := ValidateRequestBody[*T](body)
+	msg := fiber.Map{"error": ErrRequiredBodyNotFound.Error()}
 
-	if errParse != nil || errValidation != nil {
-		msg := fiber.Map{"error": ErrRequiredBodyNotFound}
+	if errParse != nil {
+		msg["message"] = errParse.Error()
+		return msg
+	}
 
-		if errValidation != nil {
-			msg["details"] = errValidation
-		}
+	errValidation := ValidateRequestBody[T](*body)
 
-		return c.Status(fiber.StatusBadRequest).JSON(msg)
+	if errValidation != nil {
+		msg["details"] = errValidation
+
+		return msg
 	}
 
 	return nil
+}
+
+func IsValidDate(date string) (time.Time, error) {
+	const layout = "2006-01-02" // Reference layout for YYYY-MM-DD
+	return time.Parse(layout, date)
 }
