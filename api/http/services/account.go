@@ -22,14 +22,6 @@ import (
 	jwt2 "golipors/pkg/jwt"
 )
 
-type AccountService struct {
-	svc                              userPort.Service
-	authCache                        *cache.ObjectCache[*presenter.LoginCacheSession]
-	emailService                     email.Adapter
-	authSecret                       string
-	expMin, refreshExpMin, otpTtlMin uint
-}
-
 var (
 	ErrUserOnCreate      = userService.ErrUserOnCreate
 	ErrUserNotFound      = userService.ErrUserNotFound
@@ -37,6 +29,14 @@ var (
 	ErrCreatingToken     = errors.New("cannot create token")
 	ErrBirthdayInvalid   = errors.New("birthday is invalid")
 )
+
+type AccountService struct {
+	svc                              userPort.Service
+	authCache                        *cache.ObjectCache[*presenter.LoginCacheSession]
+	emailService                     email.Adapter
+	authSecret                       string
+	expMin, refreshExpMin, otpTtlMin uint
+}
 
 func NewAccountService(
 	svc userPort.Service,

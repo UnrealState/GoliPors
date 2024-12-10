@@ -29,6 +29,7 @@ func Bootstrap(appContainer di.App, cfg config.ServerConfig) error {
 	api := app.Group("/api/v1", middlerwares.SetUserContext)
 
 	handlers.RegisterAccountHandlers(api, appContainer, cfg)
+	handlers.RegisterQuestionnaireHandlers(api, appContainer, cfg)
 
 	return app.Listen(fmt.Sprintf(":%d", cfg.Port))
 }
