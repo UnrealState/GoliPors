@@ -6,6 +6,7 @@ import (
 	"golipors/config"
 	"golipors/internal/user"
 	"golipors/pkg/adapters/email"
+	"golipors/pkg/adapters/rbac"
 	"golipors/pkg/adapters/storage"
 	"golipors/pkg/cache"
 	"golipors/pkg/postgres"
@@ -46,7 +47,7 @@ func (a *app) UserService(ctx context.Context) userPort.Service {
 }
 
 func (a *app) userServiceWithDB(db *gorm.DB) userPort.Service {
-	a.userService = user.NewService(storage.NewUserRepo(db, a.cfg.Server.PasswordSecret))
+	a.userService = user.NewService(storage.NewUserRepo(db, a.cfg.Server.PasswordSecret), rbac.NewCasbinAdapter(db))
 
 	if err := a.userService.RunMigrations(); err != nil {
 		panic("failed to run migrations")

@@ -1,4 +1,4 @@
-package adapters
+package rbac
 
 import (
 	"github.com/casbin/casbin/v2"
@@ -11,7 +11,7 @@ type CasbinAdapter struct {
 	Enforcer *casbin.Enforcer
 }
 
-func NewCasbinAdapter(db *gorm.DB) *CasbinAdapter {
+func NewCasbinAdapter(db *gorm.DB) CasbinAdapter {
 	// Initialize a Gorm adapter with Casbin
 	adapter, err := gormadapter.NewAdapterByDB(db)
 	if err != nil {
@@ -30,7 +30,7 @@ func NewCasbinAdapter(db *gorm.DB) *CasbinAdapter {
 		log.Fatalf("Failed to load Casbin policies: %v", err)
 	}
 
-	return &CasbinAdapter{
+	return CasbinAdapter{
 		Enforcer: enforcer,
 	}
 }
