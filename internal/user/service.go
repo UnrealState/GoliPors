@@ -7,7 +7,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"golipors/internal/user/domain"
 	"golipors/internal/user/port"
-	"golipors/pkg/adapters"
+	"golipors/pkg/adapters/rbac"
 	"gorm.io/gorm"
 	"log"
 )
@@ -22,10 +22,10 @@ var (
 
 type service struct {
 	repo          port.Repo
-	casbinAdapter adapters.CasbinAdapter
+	casbinAdapter rbac.CasbinAdapter
 }
 
-func NewService(repo port.Repo, casbinAdapter adapters.CasbinAdapter) port.Service {
+func NewService(repo port.Repo, casbinAdapter rbac.CasbinAdapter) port.Service {
 	return &service{
 		repo:          repo,
 		casbinAdapter: casbinAdapter,

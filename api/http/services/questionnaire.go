@@ -5,15 +5,15 @@ import (
 	"golipors/api/http/handlers/helpers"
 	"golipors/app"
 	"golipors/config"
-	userPort "golipors/internal/user/port"
+	questionnairPort "golipors/internal/questionnaire/port"
 )
 
 type QuestionnaireService struct {
-	svc userPort.Service
+	svc questionnairPort.Service
 }
 
 func NewQuestionnaireService(
-	svc userPort.Service,
+	svc questionnairPort.Service,
 ) *QuestionnaireService {
 	return &QuestionnaireService{
 		svc: svc,
@@ -23,7 +23,7 @@ func NewQuestionnaireService(
 func QuestionnaireServiceGetter(appContainer app.App, cfg config.ServerConfig) helpers.ServiceGetter[*QuestionnaireService] {
 	return func(ctx context.Context) *QuestionnaireService {
 		return NewQuestionnaireService(
-			appContainer.UserService(ctx),
+			appContainer.QuestionnaireService(ctx),
 		)
 	}
 }

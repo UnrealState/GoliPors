@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"golipors/config"
+	"golipors/internal/questionnaire"
 	"golipors/internal/user"
 	"golipors/pkg/adapters/email"
 	"golipors/pkg/adapters/rbac"
@@ -12,17 +13,19 @@ import (
 	"golipors/pkg/postgres"
 	"gorm.io/gorm"
 
+	questionnairePort "golipors/internal/questionnaire/port"
 	userPort "golipors/internal/user/port"
 	redisAdapter "golipors/pkg/adapters/cache"
 	appCtx "golipors/pkg/context"
 )
 
 type app struct {
-	db          *gorm.DB
-	redis       cache.Provider
-	cfg         config.Config
-	userService userPort.Service
-	mailService email.Adapter
+	db                   *gorm.DB
+	redis                cache.Provider
+	cfg                  config.Config
+	questionnaireService questionnairePort.Service
+	userService          userPort.Service
+	mailService          email.Adapter
 }
 
 func (a *app) DB() *gorm.DB {
@@ -44,6 +47,29 @@ func (a *app) UserService(ctx context.Context) userPort.Service {
 	}
 
 	return a.userServiceWithDB(db)
+}
+
+func (a *app) QuestionnaireService(ctx context.Context) questionnairePort.Service {
+	db := appCtx.GetDB(ctx)
+
+	if db == nil {
+		if a.questionnaireService == nil {
+			a.questionnaireService = a.questionnaireServiceWithDB(a.db)
+		}
+		return a.questionnaireService
+	}
+
+	return a.questionnaireServiceWithDB(db)
+}
+
+func (a *app) questionnaireServiceWithDB(db *gorm.DB) questionnairePort.Service {
+	a.questionnaireService = questionnaire.NewService(storage.NewQuestionnaireRepo(db))
+
+	if err := a.questionnaireService.RunMigrations(); err != nil {
+		panic("failed to run migrations")
+	}
+
+	return a.questionnaireService
 }
 
 func (a *app) userServiceWithDB(db *gorm.DB) userPort.Service {
